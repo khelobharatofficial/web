@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Khelo Bharat — Maps Hub</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="description" content="Khelo Bharat — quick access to India & Chhattisgarh map visualisers." />
+
+  <!-- favicon (optional) -->
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+
+  <style>
+    :root{
+      --bg:#f4f6fb;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent:#2563eb;
+      --accent-2:#0f766e;
+      --radius:12px;
+      --maxw:1100px;
+      --gap:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      background:var(--bg);
+      color:#071022;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.4;
+      -webkit-text-size-adjust:100%;
+    }
+
+    .wrap{max-width:var(--maxw);margin:20px auto;padding:18px}
+
+    /* Header */
+    header {
+      display:flex;
+      align-items:center;
+      gap:14px;
+      justify-content:space-between;
+      margin-bottom:16px;
+    }
+    .brand {
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .brand-logo { height:56px; width:auto; display:block; border-radius:8px; }
+    .brand-title h1 { margin:0; font-size:18px; line-height:1.05; }
+    .brand-title p { margin:4px 0 0; color:var(--muted); font-size:13px; }
+
+    /* Desktop nav */
+    nav.desktop { display:flex; gap:10px; align-items:center; }
+
+    .btn {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 14px; border-radius:10px; border:none;
+      color:white; background:var(--accent); text-decoration:none;
+      font-weight:700; font-size:14px; cursor:pointer;
+      box-shadow:0 6px 18px rgba(37,99,235,0.12);
+    }
+    .btn.secondary { background:var(--accent-2); box-shadow:0 6px 18px rgba(15,118,110,0.12); }
+    .btn.ghost { background:transparent; color:var(--accent); box-shadow:none; border:1px solid rgba(37,99,235,0.12); }
+
+    /* hamburger for mobile */
+    .hamburger {
+      display:none;
+      width:44px; height:44px; border-radius:10px; background:#fff; border:1px solid #eef2f7;
+      align-items:center; justify-content:center; cursor:pointer;
+    }
+    .hamburger div {
+      width:20px; height:2px; background:#071022; margin:3px 0; transition:transform .2s;
+    }
+
+    /* hero + grid */
+    .hero {
+      display:flex; gap:var(--gap); align-items:center; justify-content:space-between; margin-bottom:18px;
+      flex-wrap:wrap;
+    }
+    .hero-left { max-width:680px; }
+    .hero-left h2 { margin:0 0 6px; font-size:20px; }
+    .hero-left p { margin:0; color:var(--muted); font-size:14px; }
+
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:var(--gap);
+      margin-top:12px;
+    }
+
+    .card {
+      background:var(--card); border-radius:var(--radius); padding:14px;
+      box-shadow:0 8px 26px rgba(8,16,40,0.06); display:flex; gap:14px; align-items:flex-start;
+    }
+    .preview {
+      width:120px; height:90px; border-radius:10px; background:#f8fafc; border:1px solid #e6eef6;
+      display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--muted);
+      font-size:16px;
+    }
+    .meta h3 { margin:0 0 6px; font-size:16px; }
+    .meta p { margin:0; color:var(--muted); font-size:13px; }
+
+    .card .foot { margin-top:12px; display:flex; gap:8px; align-items:center; width:100%; }
+    .foot .small { margin-left:auto; font-size:12px; color:var(--muted); }
+
+    .deploy-note {
+      margin-top:18px; background:#fff; padding:14px; border-radius:12px; border:1px solid #eef2f7;
+      color:var(--muted); font-size:13px;
+    }
+
+    .footer { margin-top:24px; text-align:center; color:var(--muted); font-size:13px; }
+
+    /* Mobile responsiveness */
+    @media (max-width:920px){
+      .grid { grid-template-columns:1fr; }
+      .brand-logo { height:48px; }
+    }
+    @media (max-width:720px){
+      .hero-left h2 { font-size:18px; }
+      .brand-title h1 { font-size:16px; }
+      header { align-items:flex-start; gap:12px; }
+      nav.desktop { display:none; }
+      .hamburger { display:flex; }
+    }
+    /* Mobile slide-down menu */
+    .mobile-menu {
+      display:none;
+      position:fixed;
+      top:0; right:0;
+      width:100%; max-width:400px;
+      height:100vh;
+      background:var(--card);
+      box-shadow:-8px 0 30px rgba(8,16,40,0.08);
+      transform:translateX(100%); transition:transform .25s ease;
+      z-index:1200; padding:18px;
+    }
+    .mobile-menu.open { transform:translateX(0); }
+    .mobile-menu .close { display:flex; justify-content:flex-end; }
+    .mobile-menu .close button { background:transparent; border:none; font-size:18px; cursor:pointer; color:var(--muted); }
+    .mobile-menu .links { margin-top:20px; display:flex; flex-direction:column; gap:12px; }
+    .mobile-menu .links a { padding:12px 14px; border-radius:8px; text-decoration:none; font-weight:700; color:#071022; border:1px solid #eef2f7; background:#fff; }
+
+    /* small screens tweak */
+    @media (max-width:420px){
+      .brand-logo { height:42px; }
+      .preview { width:100px; height:80px; font-size:14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <a href="#" class="linkless" aria-label="Khelo Bharat Home">
+          <img src="logo.svg" alt="Khelo Bharat logo" class="brand-logo" />
+        </a>
+        <div class="brand-title">
+          <h1>Khelo Bharat — Maps Hub</h1>
+          <p class="small">India & Chhattisgarh visualisers — fast, printable maps.</p>
+        </div>
+      </div>
+
+      <nav class="desktop" aria-label="Primary">
+        <a class="btn" href="india/index.html" target="_blank" rel="noreferrer">Open India Map</a>
+        <a class="btn secondary" href="chhattisgarh/index.html" target="_blank" rel="noreferrer">Open CG Map</a>
+      </nav>
+
+      <button class="hamburger" id="hamburger" aria-label="Open menu" title="Menu">
+        <div></div><div></div><div></div>
+      </button>
+    </header>
+
+    <section class="hero">
+      <div class="hero-left">
+        <h2>Two tools — same workflow</h2>
+        <p>Open the India map (state-level) or the Chhattisgarh map (district-level) visualiser. Select areas, choose colours and attach values — then export PNG or PDF.</p>
+
+        <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+          <a class="btn" href="india/index.html" target="_blank" rel="noreferrer">Open India Map</a>
+          <a class="btn secondary" href="chhattisgarh/index.html" target="_blank" rel="noreferrer">Open CG Map</a>
+          <a class="btn ghost" href="#" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});return false;">Deploy notes</a>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center">
+        <div style="width:64px;height:64px;border-radius:10px;background:#fff;border:1px solid #eef2f7;display:flex;align-items:center;justify-content:center">
+          <img src="logo.svg" alt="logo" style="height:34px">
+        </div>
+        <div style="text-align:right">
+          <div style="font-weight:700">Khelo Bharat Officials</div>
+          <div style="color:var(--muted);font-size:13px">Data visualisation toolkit</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <article class="card">
+        <div class="preview">India</div>
+        <div class="meta">
+          <h3>India — State level visualiser</h3>
+          <p>Colour states, attach numeric/text data, get outside callouts and export PNG / PDF. Use for national reports and overviews.</p>
+          <div class="foot">
+            <a class="btn" href="india/index.html" target="_blank" rel="noreferrer">Open India Map</a>
+            <div class="small" style="margin-left:auto">Updated 2025</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="preview">CG</div>
+        <div class="meta">
+          <h3>Chhattisgarh — District visualiser</h3>
+          <p>District-level colouring & callouts for Chhattisgarh. Ideal for state-level dashboards and printable maps.</p>
+          <div class="foot">
+            <a class="btn secondary" href="chhattisgarh/index.html" target="_blank" rel="noreferrer">Open CG Map</a>
+            <div class="small" style="margin-left:auto">Updated 2025</div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="deploy-note">
+      <strong>Deploy notes</strong>
+      <p style="margin:8px 0 0">
+        Place each visualiser folder (for example <code>india/</code> and <code>chhattisgarh/</code>) alongside this file.
+        Each folder should contain its own <code>index.html</code> and topojson file(s) (e.g. <code>india.json</code>, <code>chhattisgarh.json</code>).
+        Include <code>logo.svg</code> if you want the logo embedded into exported images.
+      </p>
+    </div>
+
+    <div class="footer">© 2025 <strong>Khelo Bharat Officials</strong>.</div>
+  </div>
+
+  <!-- Mobile slide-in menu -->
+  <div id="mobileMenu" class="mobile-menu" aria-hidden="true">
+    <div class="close"><button id="menuClose" aria-label="Close menu">✕</button></div>
+    <div style="margin-top:8px">
+      <div style="display:flex;gap:10px;align-items:center">
+        <img src="logo.svg" alt="logo" style="height:44px">
+        <div>
+          <div style="font-weight:700">Khelo Bharat Officials</div>
+          <div style="color:var(--muted);font-size:13px">Maps Hub</div>
+        </div>
+      </div>
+    </div>
+    <nav class="links" style="margin-top:18px">
+      <a href="india/index.html" target="_blank">Open India Map</a>
+      <a href="chhattisgarh/index.html" target="_blank">Open Chhattisgarh Map</a>
+      <a href="#" onclick="document.getElementById('mobileMenu').classList.remove('open');">Close</a>
+    </nav>
+  </div>
+
+  <script>
+    // mobile menu toggling
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuClose = document.getElementById('menuClose');
+
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.add('open');
+      mobileMenu.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+    });
+    menuClose.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      mobileMenu.setAttribute('aria-hidden','true');
+      document.body.style.overflow = '';
+    });
+    // close when clicking outside on small screens
+    mobileMenu.addEventListener('click', (ev) => {
+      if(ev.target === mobileMenu) {
+        mobileMenu.classList.remove('open');
+        mobileMenu.setAttribute('aria-hidden','true');
+        document.body.style.overflow = '';
+      }
+    });
+
+    // keyboard friendly: close on ESC
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') {
+        if(mobileMenu.classList.contains('open')) {
+          mobileMenu.classList.remove('open');
+          mobileMenu.setAttribute('aria-hidden','true');
+          document.body.style.overflow = '';
+        }
+      }
+    });
+  </script>
+</body>
+</html>
